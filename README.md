@@ -109,9 +109,12 @@ Short option|Long option|Description
 (Not available)|`--self-update`|Update files to the latest release and quit
 (Not available)|`--singleplayer`|**DEPRECATED** Start singleplayer game, useful for save editing, using/testing DXVK in singleplayer, etc.
 (Not available)|`--skip-update-proton`|Skip updating already-installed Proton when updating game with Proton enabled
+(Not available)|`--steamruntimedir`|Choose a different Steam Runtime directory for Proton 5.13 or newer
 (Not available)|`--use-wined3d`|Use OpenGL-based D3D11 instead of DXVK when using Proton
+(Not available)|`--xdg-runtime-dir`|Use custom XDG_RUNTIME_DIR for Discord IPC sockets
 (Not available)|`--wine-desktop SIZE`|Use Wine desktop, work around missing TruckerMP overlay after tabbing out using DXVK, mouse clicking won't work in other GUI apps while the game is running, SIZE must be 'WIDTHxHEIGHT' format (e.g. 1920x1080)
 (Not available)|`--wine-steam-dir`|Choose a directory for Windows version of Steam [Default: `C:\Program Files (x86)\Steam` in the prefix]
+(Not available)|`--without-steam-runtime`|Don't use Steam Runtime even when using Proton 5.13 or newer Note: If you want to use Discord Rich Presence without this option, you need to start Discord with `XDG_RUNTIME_DIR=/path/to/dir` beforehand and also specify `--xdg-runtime-dir` option
 (Not available)|`--without-wine-discord-ipc-bridge`|Don't use wine-discord-ipc-bridge for Discord Rich Presence
 (Not available)|`--version`|Print version information and quit
 

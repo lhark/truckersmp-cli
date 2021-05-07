@@ -32,7 +32,11 @@ except ImportError:
 
 
 def activate_native_d3dcompiler_47(prefix, wine):
-    """Download/activate native 64-bit version of d3dcompiler_47."""
+    """
+    Download/activate native 64-bit version of d3dcompiler_47.
+
+    wine: A list used to run Wine executable
+    """
     # check whether DLL is already downloaded
     need_download = True
     try:
@@ -66,9 +70,10 @@ def activate_native_d3dcompiler_47(prefix, wine):
     exename = "eurotrucks2.exe" if Args.ets2 else "amtrucks.exe"
     logging.debug("Adding DLL override setting for %s", exename)
     subproc.call(
-        (wine, "reg", "add",
-         "HKCU\\Software\\Wine\\AppDefaults\\{}\\DllOverrides".format(exename),
-         "/v", "d3dcompiler_47", "/t", "REG_SZ", "/d", "native", "/f"),
+        wine + [
+            "reg", "add",
+            "HKCU\\Software\\Wine\\AppDefaults\\{}\\DllOverrides".format(exename),
+            "/v", "d3dcompiler_47", "/t", "REG_SZ", "/d", "native", "/f"],
         env=env)
 
 
@@ -296,6 +301,24 @@ def get_current_steam_user():
     return None
 
 
+def get_proton_version(protondir):
+    """
+    Get Proton version from "version" file.
+
+    This function returns (major, minor) version pair.
+    Examples:
+      "xxxxxxxxxx proton-5.13-6" -> (5, 13)
+      "xxxxxxxxxx 6.1-GE-2" -> (6, 1)
+
+    protondir: Proton top directory that has "version" file
+    """
+    with open(os.path.join(protondir, "version")) as f_version:
+        ver = f_version.read(128)
+    ver = ver.replace("proton-", "")
+    major, minor = ver[ver.index(" ") + 1:ver.index("-")].split(".")
+    return int(major), int(minor)
+
+
 def get_short_size(size_bytes):
     """
     Get a file size string in short format.
@@ -431,7 +454,7 @@ def set_wine_desktop_registry(prefix, wine, enable):
     Otherwise, this function disables Wine desktop.
 
     prefix: Path to Wine prefix to configure
-    wine: Path to Wine executable
+    wine: A list used to run Wine executable
     enable: Whether to enable Wine desktop
     """
     env = os.environ.copy()
@@ -444,19 +467,23 @@ def set_wine_desktop_registry(prefix, wine, enable):
     if enable:
         logging.info("Enabling Wine desktop (%s)", Args.wine_desktop)
         subproc.call(
-            (wine, "reg", "add", regkey_explorer,
-             "/v", "Desktop", "/t", "REG_SZ", "/d", "Default", "/f"),
+            wine + [
+                "reg", "add", regkey_explorer,
+                "/v", "Desktop", "/t", "REG_SZ", "/d", "Default", "/f"],
             env=env)
         subproc.call(
-            (wine, "reg", "add", regkey_desktops,
-             "/v", "Default", "/t", "REG_SZ", "/d", Args.wine_desktop, "/f"),
+            wine + [
+                "reg", "add", regkey_desktops,
+                "/v", "Default", "/t", "REG_SZ", "/d", Args.wine_desktop, "/f"],
             env=env)
     else:
         logging.info("Disabling Wine desktop")
         subproc.call(
-            (wine, "reg", "delete", regkey_explorer, "/v", "Desktop", "/f"), env=env)
+            wine + [
+                "reg", "delete", regkey_explorer, "/v", "Desktop", "/f"], env=env)
         subproc.call(
-            (wine, "reg", "delete", regkey_desktops, "/v", "Default", "/f"), env=env)
+            wine + [
+                "reg", "delete", regkey_desktops, "/v", "Default", "/f"], env=env)
 
 
 def wait_for_steam(use_proton, loginvdf_paths, wine=None, env=None):

@@ -17,6 +17,7 @@ class AppId:
         "ets2":         227300,        # https://steamdb.info/app/227300/
     }
     proton = {}
+    steamruntime = {}
 
 
 class Args:
@@ -27,24 +28,22 @@ class Dir:
     """Directories."""
 
     XDG_DATA_HOME = os.getenv("XDG_DATA_HOME", os.path.expanduser("~/.local/share"))
-    default_gamedir = {
-        "ats": os.path.join(
-            XDG_DATA_HOME, "truckersmp-cli/American Truck Simulator/data"),
-        "ets2": os.path.join(
-            XDG_DATA_HOME, "truckersmp-cli/Euro Truck Simulator 2/data"),
-    }
-    default_prefixdir = {
-        "ats": os.path.join(
-            XDG_DATA_HOME, "truckersmp-cli/American Truck Simulator/prefix"),
-        "ets2": os.path.join(
-            XDG_DATA_HOME, "truckersmp-cli/Euro Truck Simulator 2/prefix"),
-    }
-    default_moddir = os.path.join(XDG_DATA_HOME, "truckersmp-cli/TruckersMP")
-    default_protondir = os.path.join(XDG_DATA_HOME, "truckersmp-cli/Proton")
-    steamcmddir = os.path.join(XDG_DATA_HOME, "truckersmp-cli/steamcmd")
+    truckersmp_cli_data = os.path.join(XDG_DATA_HOME, "truckersmp-cli")
+    default_gamedir = dict(
+        ats=os.path.join(truckersmp_cli_data, "American Truck Simulator/data"),
+        ets2=os.path.join(truckersmp_cli_data, "Euro Truck Simulator 2/data"),
+    )
+    default_prefixdir = dict(
+        ats=os.path.join(truckersmp_cli_data, "American Truck Simulator/prefix"),
+        ets2=os.path.join(truckersmp_cli_data, "Euro Truck Simulator 2/prefix"),
+    )
+    default_moddir = os.path.join(truckersmp_cli_data, "TruckersMP")
+    default_protondir = os.path.join(truckersmp_cli_data, "Proton")
+    default_steamruntimedir = os.path.join(truckersmp_cli_data, "SteamRuntime")
+    steamcmddir = os.path.join(truckersmp_cli_data, "steamcmd")
     steamcmdpfx = os.path.join(steamcmddir, "pfx")
-    dllsdir = os.path.join(XDG_DATA_HOME, "truckersmp-cli/dlls")
-    ipcbrdir = os.path.join(XDG_DATA_HOME, "truckersmp-cli/wine-discord-ipc-bridge")
+    dllsdir = os.path.join(truckersmp_cli_data, "dlls")
+    ipcbrdir = os.path.join(truckersmp_cli_data, "wine-discord-ipc-bridge")
     scriptdir = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -62,6 +61,7 @@ class File:
         os.path.join(os.path.expanduser("~/.steam/debian-installation"), loginvdf_inner),
     ]
     proton_json = os.path.join(Dir.scriptdir, "proton.json")
+    steamruntime_json = os.path.join(Dir.scriptdir, "steamruntime.json")
     inject_exe = os.path.join(Dir.scriptdir, "truckersmp-cli.exe")
     overlayrenderer_inner = "ubuntu12_64/gameoverlayrenderer.so"
     d3dcompiler_47 = os.path.join(Dir.dllsdir, "d3dcompiler_47.dll")
@@ -69,6 +69,7 @@ class File:
     ipcbridge = os.path.join(Dir.ipcbrdir, "winediscordipcbridge.exe")
     ipcbridge_md5 = "78fef85810c5bb8e492d3f67f48947a5"
     sdl2_soname = "libSDL2-2.0.so.0"
+    steamruntime_helper = os.path.join(Dir.scriptdir, "steamruntime_helper.py")
 
 
 class URL:

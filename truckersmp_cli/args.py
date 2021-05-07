@@ -167,6 +167,7 @@ Need to download (-u) the game?""".format(Args.gamedir))
     logging.info("Prefix: %s", Args.prefixdir)
     if Args.proton:
         logging.info("Proton directory: %s", Args.protondir)
+        logging.info("Steam Runtime directory: %s", Args.steamruntimedir)
 
 
 def create_arg_parser():
@@ -179,6 +180,7 @@ def create_arg_parser():
     * The 2nd element is a list of _StoreAction objects
       (used only in "gen_completions" program)
     """
+    # pylint: disable=too-many-statements
     desc = """
 A simple launcher for TruckersMP to play ATS or ETS2 in multiplayer.
 
@@ -270,6 +272,11 @@ SteamCMD can use your saved credentials for convenience.
                 [Default if neither start or update are specified]""",
         action="store_true"))
     store_actions.append(parser.add_argument(
+        "--steamruntimedir", metavar="DIR",
+        default=Dir.default_steamruntimedir,
+        help="""choose a different Steam Runtime directory for Proton 5.13 or newer
+                [Default: $XDG_DATA_HOME/truckersmp-cli/SteamRuntime]"""))
+    store_actions.append(parser.add_argument(
         "-u", "--update",
         help="""**DEPRECATED** update the game
                 [Default if neither start or update are specified]""",
@@ -330,13 +337,16 @@ SteamCMD can use your saved credentials for convenience.
         action="store_true"))
     store_actions.append(parser.add_argument(
         "--skip-update-proton",
-        help="""skip updating already-installed Proton
+        help="""skip updating already-installed Proton and Steam Runtime
                 when updating game with Proton enabled""",
         action="store_true"))
     store_actions.append(parser.add_argument(
         "--use-wined3d",
         help="use OpenGL-based D3D11 instead of DXVK when using Proton",
         action="store_true"))
+    store_actions.append(parser.add_argument(
+        "--xdg-runtime-dir", metavar="DIR",
+        help="use custom XDG_RUNTIME_DIR for Discord IPC sockets"))
     store_actions.append(parser.add_argument(
         "--wine-desktop", metavar="SIZE", type=str,
         help="""use Wine desktop, work around missing TruckerMP overlay
@@ -347,6 +357,14 @@ SteamCMD can use your saved credentials for convenience.
         "--wine-steam-dir", metavar="DIR", type=str,
         help="""choose a directory for Windows version of Steam
                 [Default: "C:\\Program Files (x86)\\Steam" in the prefix]"""))
+    store_actions.append(parser.add_argument(
+        "--without-steam-runtime",
+        help="""don't use Steam Runtime even when using Proton 5.13 or newer
+                Note: If you want to use Discord Rich Presence
+                without this option, you need to start Discord with
+                "XDG_RUNTIME_DIR=/path/to/dir" beforehand
+                and also specify "--xdg-runtime-dir" option""",
+        action="store_true"))
     store_actions.append(parser.add_argument(
         "--without-wine-discord-ipc-bridge",
         help="don't use wine-discord-ipc-bridge for Discord Rich Presence",
